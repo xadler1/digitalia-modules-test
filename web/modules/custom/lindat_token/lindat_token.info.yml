@@ -1,0 +1,8 @@
+name: Media files URLs token
+description: "Provides a token for displaying URLs of published media files of a node"
+package: custom
+type: module
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:token
+  - drupal:islandora

@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Contains lindat_token.module.
+ */
+
+/**
+ * Implements hook_metatag_tags_alter().
+ *
+ * Not strictly necessary as a modification in 'web/modules/contrib/metatag/src/Plugin/metatag/Tag/MetaNameBase.php'
+ * makes all tags repeatable. Leaving this for usage on other sites without said hack.
+ */
+function lindat_token_metatag_tags_alter(&$definitions)
+{
+        $terms = ['dcterms_relation'];
+        foreach ($terms as $term) {
+                if (!empty($definitions[$term])) {
+                        $definitions[$term]['multiple'] = TRUE;
+                }   
+        }   
+}
+
