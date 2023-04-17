@@ -1,0 +1,88 @@
+<?php
+
+use Drupal\views\ViewExecutable;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\area\AreaPluginBase;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\bp_search_alter\Plugin\MyClass;
+
+
+/**
+ * Implements hook_views_post_render().
+ */
+function bp_search_alter_views_post_render($view, &$output, $cache)
+{
+	if ($view->id() == 'bp_search' && $view->current_display == 'main_search_page' && $output['#rows']) {
+		// move result summary before results
+		$output['#rows']['0']['#weight'] = 10;
+		$summary = '<div class="result-summary">' . $view->header['result_1']->render()['#markup'] . "</div>";
+		$output['#rows']['test'] = array('#type' => 'markup',
+		                                            '#markup' => $summary,
+		                                            '#weight' => 0);
+
+		//// "remove" original result summary
+		$view->header['result_1']->options['content'] = "";
+
+		// rewriting links seems easier in js
+	}
+}
+
+
+/**
+ * Inserts line breaks and order of filters on search page.
+ *
+ * Implements hook_form_alter().
+ */
+function bp_search_alter_form_alter(array &$form, FormStateInterface $form_state, $form_id)
+{
+	if ($form_id == "views_exposed_form" && $form['#id'] == "views-exposed-form-bp-search-main-search-page") {
+		$breaks = [5, 13, 23, 32, 41, 59, 62];
+
+		// first row
+		$form['rendered_item_metadata']['#weight'] = 1;
+		$form['title']['#weight'] = 2;
+		$form['field_object_type_detailed']['#weight'] = 3;
+		$form['field_image_refid']['#weight'] = 4;
+
+		// second row
+		$form['field_date_of_creation_last']['#weight'] = 10;
+		$form['field_date_of_creation_first']['#weight'] = 11;
+		$form['field_style_period']['#weight'] = 12;
+
+		// third row
+		$form['field_pattern_type']['#weight'] = 20;
+		$form['field_pattern_subject']['#weight'] = 21;
+		$form['field_pattern_subject_detailed']['#weight'] = 22;
+
+		// fourth row
+		$form['field_technique_base_colour']['#weight'] = 30;
+		$form['field_technique_base_type']['#weight'] = 31;
+
+		// fifth row
+		$form['heading']['#weight'] = 40;
+
+		// sixth row
+		$form['field_technique_warp']['#weight'] = 50;
+		$form['field_technique_broche']['#weight'] = 51;
+		$form['field_technique_lance']['#weight'] = 52;
+		$form['field_technique_lisere']['#weight'] = 53;
+		$form['field_technique_metal']['#weight'] = 54;
+		$form['field_technique_riant']['#weight'] = 55;
+		$form['field_technique_couvert']['#weight'] = 56;
+		$form['field_technique_onde']['#weight'] = 57;
+		$form['field_technique_plate']['#weight'] = 58;
+
+		// seventh row
+		$form['sort_by']['#weight'] = 60;
+		$form['sort_order']['#weight'] = 61;
+
+		// add breaks after each row
+		for ($i = 0; $i < sizeof($breaks); $i++) {
+			$name = "break_" . $i;
+			$form[$name] = array('#type' => 'markup',
+		                             '#markup' => "<hr>",
+		                             '#weight' => $breaks[$i]);
+		}
+	}
+}

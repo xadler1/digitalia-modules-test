@@ -1,0 +1,6 @@
+name: BP search form alter module
+description: Alters the seach page form spacing
+package: BP custom modules
+
+type: module
+core_version_requirement: ^8.8 || ^9
